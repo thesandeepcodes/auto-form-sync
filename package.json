@@ -1,0 +1,50 @@
+{
+  "name": "auto-form-sync",
+  "version": "1.0.0",
+  "description": "Auto-save and restore form data using Local/Session/Custom Storage.",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "form",
+    "autosave",
+    "localstorage",
+    "sessionstorage",
+    "typescript",
+    "browser",
+    "draft",
+    "form-data",
+    "react"
+  ],
+  "author": "Sandeep K.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thesandeepcodes/auto-form-sync.git"
+  },
+  "bugs": {
+    "url": "https://github.com/thesandeepcodes/auto-form-sync/issues"
+  },
+  "homepage": "https://github.com/thesandeepcodes/auto-form-sync#readme",
+  "devDependencies": {
+    "@rollup/plugin-terser": "^0.4.4",
+    "rollup": "^4.45.0",
+    "rollup-plugin-typescript2": "^0.36.0",
+    "typescript": "^5.8.3"
+  }
+}

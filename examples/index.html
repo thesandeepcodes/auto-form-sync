@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Auto Form Sync</title>
+  </head>
+  <body>
+    <form id="myform">
+      <input type="name" name="username" placeholder="Enter Username" />
+      <select name="userRole">
+        <option value="admin">Admin</option>
+        <option value="manager">Manager</option>
+      </select>
+      <input type="password" name="password" placeholder="Password" />
+
+      <input type="checkbox" name="keepMeLoggedIn" id="keepMeLoggedIn" />
+      <label for="keepMeLoggedIn">Keep me logged in</label>
+
+      <button type="submit">Login</button>
+    </form>
+
+    <script type="module">
+      import { autoFormSync } from "../dist/index.esm.min.js";
+
+      const form = document.querySelector("#myform");
+
+      form.onsubmit = (e) => {
+        e.preventDefault();
+      };
+
+      autoFormSync("#myform", {
+        key: "my-custom-key", // should be unique for each form
+        storage: "SessionStorage", // SessionStorage | LocalStorage | object: StorageAdapter
+        debounce: 400, // in ms
+        exclude: [
+          "password",
+          (field) => {
+            console.log(field);
+            return false;
+          },
+          (field) => false,
+        ],
+
+        restoreOnLoad: true,
+        clearOnSubmit: true, // clears storage after form submit
+        serializer: (data) => {
+          // serializer for data
+          return JSON.stringify(data);
+        },
+        deserializer: (serialized) => {
+          // deserializer for serialized data
+          return JSON.parse(serialized);
+        },
+        onSave: (data) => {},
+        onRestore: (data) => {},
+        onClear: () => {},
+      });
+    </script>
+  </body>
+</html>
