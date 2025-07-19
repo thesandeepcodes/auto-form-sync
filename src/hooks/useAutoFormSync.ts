@@ -1,29 +1,17 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useRef } from "react";
 import autoFormSync from "../core/autoFormSync";
 import { AutoFormSyncOptions } from "../types";
 
 export default function useAutoFormSync(selector: string, options: AutoFormSyncOptions = {}): void {
-  const stableOptions = useMemo(() => options, [
-    options.key,
-    options.storage,
-    options.debounce,
-    options.exclude,
-    options.restoreOnLoad,
-    options.clearOnSubmit,
-    options.serializer,
-    options.deserializer,
-    options.onSave,
-    options.onRestore,
-    options.onClear,
-  ]);
+  const cleanupAutoForm = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     let cancelled = false;
 
     const init = async () => {
       try {
-        if (!cancelled) {
-          await autoFormSync(selector, stableOptions);
+        if (!cancelled && cleanupAutoForm.current == null) {
+          cleanupAutoForm.current = await autoFormSync(selector, options);
         }
       } catch (error) {
         console.error(`[useAutoFormSync] Error initializing form sync:`, error);
@@ -34,6 +22,11 @@ export default function useAutoFormSync(selector: string, options: AutoFormSyncO
 
     return () => {
       cancelled = true;
+      
+      if (typeof cleanupAutoForm.current === "function") {
+        cleanupAutoForm.current();
+        cleanupAutoForm.current = null;
+      }
     };
-  }, [selector, stableOptions]);
+  }, [selector, options]);
 }

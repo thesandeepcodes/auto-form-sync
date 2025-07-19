@@ -1,6 +1,6 @@
 {
   "name": "auto-form-sync",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Auto-save and restore form data using Local/Session/Custom Storage.",
   "type": "module",
   "main": "dist/index.js",

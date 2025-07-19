@@ -217,25 +217,13 @@ async function autoFormSync(selector, options = {}) {
 }
 
 function useAutoFormSync(selector, options = {}) {
-    const stableOptions = react.useMemo(() => options, [
-        options.key,
-        options.storage,
-        options.debounce,
-        options.exclude,
-        options.restoreOnLoad,
-        options.clearOnSubmit,
-        options.serializer,
-        options.deserializer,
-        options.onSave,
-        options.onRestore,
-        options.onClear,
-    ]);
+    const cleanupAutoForm = react.useRef(null);
     react.useEffect(() => {
         let cancelled = false;
         const init = async () => {
             try {
-                if (!cancelled) {
-                    await autoFormSync(selector, stableOptions);
+                if (!cancelled && cleanupAutoForm.current == null) {
+                    cleanupAutoForm.current = await autoFormSync(selector, options);
                 }
             }
             catch (error) {
@@ -245,8 +233,12 @@ function useAutoFormSync(selector, options = {}) {
         init();
         return () => {
             cancelled = true;
+            if (typeof cleanupAutoForm.current === "function") {
+                cleanupAutoForm.current();
+                cleanupAutoForm.current = null;
+            }
         };
-    }, [selector, stableOptions]);
+    }, [selector, options]);
 }
 
 exports.autoFormSync = autoFormSync;

@@ -57,7 +57,7 @@ Or include via `<script>` tag:
 Use the built-in React hook useAutoFormSync to integrate with your forms inside React components.
 
 ```js
-import React, { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { useAutoFormSync } from "auto-form-sync";
 
 function LoginForm() {
@@ -66,20 +66,25 @@ function LoginForm() {
     password: "",
   });
 
-  useAutoFormSync("#loginForm", {
-    key: "login-draft",
-    exclude: ["password"],
-    onRestore: (restored) => {
-      const restoredMap = Object.fromEntries(
-        restored.map((field) => [field.name, field.value])
-      );
+  const options = useMemo(
+    () => ({
+      key: "login-draft",
+      exclude: ["password"],
+      onRestore: (restored) => {
+        const restoredMap = Object.fromEntries(
+          restored.map((field) => [field.name, field.value])
+        );
 
-      setFormData((prev) => ({
-        ...prev,
-        ...restoredMap,
-      }));
-    },
-  });
+        setFormData((prev) => ({
+          ...prev,
+          ...restoredMap,
+        }));
+      },
+    }),
+    []
+  );
+
+  useAutoFormSync("#loginForm", options);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -112,6 +117,8 @@ export default LoginForm;
 ```
 
 ✅ Works with all React versions >=17. No provider or setup needed.
+
+> ℹ️ Always wrap the options in the useMemo hook when passing them to autoFormSync.
 
 ---
 
