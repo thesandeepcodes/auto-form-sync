@@ -3,7 +3,7 @@ import { addFormListeners } from "./addFormListeners";
 import { restoreForm } from "./restoreForm";
 
 
-export default async function autoFormSync(selector: string, options: AutoFormSyncOptions = {}): Promise<void> {
+export default async function autoFormSync(selector: string, options: AutoFormSyncOptions = {}): Promise<() => void> {
   const form = document.querySelector<HTMLFormElement>(selector);
 
   if (!form) {
@@ -17,7 +17,7 @@ export default async function autoFormSync(selector: string, options: AutoFormSy
     await restoreForm(form, options)
   }
 
-  await addFormListeners(form, options)
-
   console.warn(`[auto-form-sync] Initialized on form:`, form);
+
+  return await addFormListeners(form, options)
 }

@@ -1,2 +1,3 @@
 import autoFormSync from "./core/autoFormSync";
-export { autoFormSync };
+import useAutoFormSync from "./hooks/useAutoFormSync";
+export { autoFormSync, useAutoFormSync };

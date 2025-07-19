@@ -1,3 +1,5 @@
+import { useMemo, useEffect } from 'react';
+
 /**
  * Debounce function: delays execution of `fn` until after `delay` ms have passed
  * since the last time it was invoked.
@@ -208,9 +210,42 @@ async function autoFormSync(selector, options = {}) {
     if (restoreOnLoad) {
         await restoreForm(form, options);
     }
-    await addFormListeners(form, options);
     console.warn(`[auto-form-sync] Initialized on form:`, form);
+    return await addFormListeners(form, options);
 }
 
-export { autoFormSync };
+function useAutoFormSync(selector, options = {}) {
+    const stableOptions = useMemo(() => options, [
+        options.key,
+        options.storage,
+        options.debounce,
+        options.exclude,
+        options.restoreOnLoad,
+        options.clearOnSubmit,
+        options.serializer,
+        options.deserializer,
+        options.onSave,
+        options.onRestore,
+        options.onClear,
+    ]);
+    useEffect(() => {
+        let cancelled = false;
+        const init = async () => {
+            try {
+                if (!cancelled) {
+                    await autoFormSync(selector, stableOptions);
+                }
+            }
+            catch (error) {
+                console.error(`[useAutoFormSync] Error initializing form sync:`, error);
+            }
+        };
+        init();
+        return () => {
+            cancelled = true;
+        };
+    }, [selector, stableOptions]);
+}
+
+export { autoFormSync, useAutoFormSync };
 //# sourceMappingURL=index.esm.js.map

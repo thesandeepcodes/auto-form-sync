@@ -52,6 +52,69 @@ Or include via `<script>` tag:
 
 ---
 
+## ⚛️ React Usage
+
+Use the built-in React hook useAutoFormSync to integrate with your forms inside React components.
+
+```js
+import React, { useEffect, useState } from "react";
+import { useAutoFormSync } from "auto-form-sync";
+
+function LoginForm() {
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+  });
+
+  useAutoFormSync("#loginForm", {
+    key: "login-draft",
+    exclude: ["password"],
+    onRestore: (restored) => {
+      const restoredMap = Object.fromEntries(
+        restored.map((field) => [field.name, field.value])
+      );
+
+      setFormData((prev) => ({
+        ...prev,
+        ...restoredMap,
+      }));
+    },
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  return (
+    <form id="loginForm">
+      <input
+        name="username"
+        placeholder="Username"
+        value={formData.username}
+        onChange={handleChange}
+      />
+      <input
+        name="password"
+        type="password"
+        value={formData.password}
+        onChange={handleChange}
+      />
+      <button type="submit">Submit</button>
+    </form>
+  );
+}
+
+export default LoginForm;
+```
+
+✅ Works with all React versions >=17. No provider or setup needed.
+
+---
+
 ## ⚙️ Options
 
 | Option          | Type                                                                      | Default                               | Description                                                                |
